@@ -1,0 +1,29 @@
+<launch>
+    <arg name="robot_namespace" default="/"/>
+    <arg name="world_name" default="$(find scout_gazebo_sim)/worlds/weston_robot_empty.world"/>
+    <arg name="spawn_obstacles" default="false"/>
+    
+    <!-- 启动Gazebo世界 -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_name)"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <!-- 生成Scout机器人 -->
+    <include file="$(find scout_gazebo_sim)/launch/spawn_scout_mini.launch"></include>
+
+    <!-- 启动假障碍物检测器 -->
+    <!-- <rosparam file="$(find onboard_detector)/cfg/fake_detector_param.yaml" /> -->
+    <rosparam file="/home/jinchuanma/scout_ws/src/LV-DOT/onboard_detector/cfg/fake_detector_param.yaml" />
+    <node pkg="onboard_detector" type="fake_detector_node" name="fake_detector_node" output="screen" />
+
+    <!-- 启动RViz，使用model_display配置（与scout_mini_playpen.launch一致） -->
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_description)/rviz/model_display.rviz" /> -->
+    <node name="rviz" pkg="rviz" type="rviz" args="" />
+
+
+</launch>

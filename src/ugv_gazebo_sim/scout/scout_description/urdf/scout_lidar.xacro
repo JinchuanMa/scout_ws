@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="scout_lidar">
+
+  <xacro:macro name="scout_lidar" params="
+    name:=lidar 
+    parent:=base_link 
+    xyz:='0 0 0.6' 
+    rpy:='0 0 0'
+    topic:=/scan
+    update_rate:=10
+    samples:=360
+    min_range:=0.3
+    max_range:=10.0
+    min_angle:=-3.14159
+    max_angle:=3.14159
+    noise_stddev:=0.01">
+    
+    <link name="sensor_${name}">
+      <visual>
+        <geometry>
+          <cylinder radius="0.02" length="0.03"/>
+        </geometry>
+        <material name="lidar_red">
+          <color rgba="1 0 0 1" />
+        </material>
+      </visual>
+      <inertial>
+        <mass value="0.1" />
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001" />
+      </inertial>
+    </link>
+
+    <joint name="sensor_${name}_joint" type="fixed">
+      <origin xyz="${xyz}" rpy="${rpy}" />
+      <parent link="${parent}" />
+      <child link="sensor_${name}" />
+    </joint>
+
+    <gazebo reference="sensor_${name}">
+      <material>Gazebo/Red</material>
+      <sensor type="ray" name="${name}_sensor">
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <update_rate>${update_rate}</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>${samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${min_angle}</min_angle>
+              <max_angle>${max_angle}</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${noise_stddev}</stddev>
+          </noise>
+        </ray>
+        <plugin name="gazebo_ros_laser" filename="libgazebo_ros_laser.so">
+          <topicName>${topic}</topicName>
+          <frameName>sensor_${name}</frameName>
+        </plugin>
+      </sensor>
+    </gazebo>
+    
+  </xacro:macro>
+
+</robot>

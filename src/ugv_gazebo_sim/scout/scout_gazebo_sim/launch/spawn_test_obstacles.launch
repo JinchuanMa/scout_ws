@@ -1,0 +1,20 @@
+<launch>
+    <!-- 动态盒子障碍物 -->
+    <node name="spawn_dynamic_box_1" pkg="gazebo_ros" type="spawn_model" 
+          args="-sdf -model dynamic_box_1.0_1.0_2.0 -x 3 -y 2 -z 1
+                -param /robot_description" />
+    
+    <!-- 动态圆柱障碍物 -->
+    <node name="spawn_dynamic_cylinder_1" pkg="gazebo_ros" type="spawn_model" 
+          args="-sdf -model dynamic_cylinder_0.5_0.5_1.5 -x -2 -y 3 -z 0.75
+                -param /robot_description" />
+    
+    <!-- 人形障碍物 -->
+    <node name="spawn_person_1" pkg="gazebo_ros" type="spawn_model" 
+          args="-sdf -model person_0.4_0.4_1.8 -x 5 -y -1 -z 0.9
+                -param /robot_description" />
+
+    <!-- 障碍物运动控制节点（可选） -->
+    <node name="obstacle_mover" pkg="onboard_detector" type="obstacle_mover_node" 
+          output="screen" if="$(arg enable_moving_obstacles)" />
+</launch>
