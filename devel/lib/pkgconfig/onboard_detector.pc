@@ -1,0 +1,8 @@
+prefix=/home/jinchuanma/scout_ws/devel
+
+Name: onboard_detector
+Description: Description of onboard_detector
+Version: 1.0.0
+Cflags: -I/home/jinchuanma/scout_ws/devel/include -I/home/jinchuanma/scout_ws/src/LV-DOT/onboard_detector/include
+Libs: -L${prefix}/lib -lonboard_detector
+Requires: roscpp rospy std_msgs message_generation geometry_msgs

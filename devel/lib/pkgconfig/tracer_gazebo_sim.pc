@@ -1,0 +1,8 @@
+prefix=/home/jinchuanma/scout_ws/devel
+
+Name: tracer_gazebo_sim
+Description: Description of tracer_gazebo_sim
+Version: 0.0.1
+Cflags: -I/home/jinchuanma/scout_ws/src/ugv_gazebo_sim/tracer/tracer_gazebo_sim/include
+Libs: -L${prefix}/lib 
+Requires: roscpp sensor_msgs

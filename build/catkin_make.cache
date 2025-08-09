@@ -1,0 +1,2 @@
+LV-DOT/onboard_detector:pub_sub:server_client:ugv_gazebo_sim/scout/pro:ugv_gazebo_sim/scout/scout_control:ugv_gazebo_sim/scout/scout_description:ugv_gazebo_sim/scout/scout_gazebo_sim
+-DCATKIN_DEVEL_PREFIX=/home/jinchuanma/scout_ws/devel -DCMAKE_INSTALL_PREFIX=/home/jinchuanma/scout_ws/install -G Unix Makefiles
