@@ -116,12 +116,10 @@ namespace onboardDetector{
 
 	void fakeDetector::stateCB(const gazebo_msgs::ModelStatesConstPtr& allStates){
 		bool update = false;
-		// if (this->firstTime_){
-		// 	this->targetIndex_ = this->findTargetIndex(allStates->name);
-		// 	this->firstTime_ = false;
-		// }
-		this->targetIndex_ = this->findTargetIndex(allStates->name);
-		
+		if (this->firstTime_){
+			this->targetIndex_ = this->findTargetIndex(allStates->name);
+			this->firstTime_ = false;
+		}
 		std::vector<onboardDetector::box3D> obVec;
 		onboardDetector::box3D ob;
 		geometry_msgs::Pose p;
@@ -134,8 +132,7 @@ namespace onboardDetector{
 			ob.x = p.position.x;
 			ob.y = p.position.y;
 			if (name.size() >= 6 and name.compare(0, 6, "person") == 0){
-				// ob.z = p.position.z + 0.9;
-				ob.z = p.position.z;
+				ob.z = p.position.z + 0.9;
 			}
 			else{
 				ob.z = p.position.z;
@@ -215,9 +212,8 @@ namespace onboardDetector{
 		}
 	}
 
-	std::vector<int> fakeDetector::findTargetIndex(const std::vector<std::string>& modelNames){
-		// static std::vector<int> targetIndex;
-		std::vector<int> targetIndex;
+	std::vector<int>& fakeDetector::findTargetIndex(const std::vector<std::string>& modelNames){
+		static std::vector<int> targetIndex;
 		int countID = 0;
 		for (std::string name : modelNames){
 			for (std::string targetName : this->targetObstacle_){
@@ -237,21 +233,16 @@ namespace onboardDetector{
 
 			// 12 lines for each obstacle
 			geometry_msgs::Point p1, p2, p3, p4, p5, p6, p7, p8;
-
-			// 将尺寸缩小100倍用于可视化
-			double vis_x_width = obstacle.x_width / 100.0;
-			double vis_y_width = obstacle.y_width / 100.0;
-			double vis_z_width = obstacle.z_width / 100.0;
 			// upper four points
-			p1.x = obstacle.x+vis_x_width/2; p1.y = obstacle.y+vis_y_width/2; p1.z = obstacle.z+vis_z_width/2;
-			p2.x = obstacle.x-vis_x_width/2; p2.y = obstacle.y+vis_y_width/2; p2.z = obstacle.z+vis_z_width/2;
-			p3.x = obstacle.x+vis_x_width/2; p3.y = obstacle.y-vis_y_width/2; p3.z = obstacle.z+vis_z_width/2;
-			p4.x = obstacle.x-vis_x_width/2; p4.y = obstacle.y-vis_y_width/2; p4.z = obstacle.z+vis_z_width/2;
+			p1.x = obstacle.x+obstacle.x_width/2; p1.y = obstacle.y+obstacle.y_width/2; p1.z = obstacle.z+obstacle.z_width/2;
+			p2.x = obstacle.x-obstacle.x_width/2; p2.y = obstacle.y+obstacle.y_width/2; p2.z = obstacle.z+obstacle.z_width/2;
+			p3.x = obstacle.x+obstacle.x_width/2; p3.y = obstacle.y-obstacle.y_width/2; p3.z = obstacle.z+obstacle.z_width/2;
+			p4.x = obstacle.x-obstacle.x_width/2; p4.y = obstacle.y-obstacle.y_width/2; p4.z = obstacle.z+obstacle.z_width/2;
 
-			p5.x = obstacle.x+vis_x_width/2; p5.y = obstacle.y+vis_y_width/2; p5.z = obstacle.z-vis_z_width/2;
-			p6.x = obstacle.x-vis_x_width/2; p6.y = obstacle.y+vis_y_width/2; p6.z = obstacle.z-vis_z_width/2;
-			p7.x = obstacle.x+vis_x_width/2; p7.y = obstacle.y-vis_y_width/2; p7.z = obstacle.z-vis_z_width/2;
-			p8.x = obstacle.x-vis_x_width/2; p8.y = obstacle.y-vis_y_width/2; p8.z = obstacle.z-vis_z_width/2;
+			p5.x = obstacle.x+obstacle.x_width/2; p5.y = obstacle.y+obstacle.y_width/2; p5.z = obstacle.z-obstacle.z_width/2;
+			p6.x = obstacle.x-obstacle.x_width/2; p6.y = obstacle.y+obstacle.y_width/2; p6.z = obstacle.z-obstacle.z_width/2;
+			p7.x = obstacle.x+obstacle.x_width/2; p7.y = obstacle.y-obstacle.y_width/2; p7.z = obstacle.z-obstacle.z_width/2;
+			p8.x = obstacle.x-obstacle.x_width/2; p8.y = obstacle.y-obstacle.y_width/2; p8.z = obstacle.z-obstacle.z_width/2;
 
 			std::vector<geometry_msgs::Point> line1Vec {p1, p2};
 			std::vector<geometry_msgs::Point> line2Vec {p1, p3};

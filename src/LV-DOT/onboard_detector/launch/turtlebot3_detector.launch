@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- TurtleBot3 Model -->
+    <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+    
+    <!-- Gazebo World with obstacles -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find onboard_detector)/worlds/turtlebot3_detector_world.world"/>
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="headless" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <!-- TurtleBot3 -->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find onboard_detector)/urdf/turtlebot3_$(arg model)_detector.urdf.xacro" />
+    
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf"
+          args="-urdf -model turtlebot3_$(arg model) -x 0 -y 0 -z 0.01 -param robot_description" />
+
+    <!-- Robot State Publisher -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="50.0" />
+        <param name="tf_prefix" value="" />
+    </node>
+
+    <!-- Joint State Publisher -->
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"/>
+
+    <!-- 2D LiDAR to 3D Point Cloud Converter -->
+    <node pkg="onboard_detector" type="lidar_2d_to_3d_converter" name="lidar_2d_to_3d_converter" output="screen">
+        <param name="input_scan_topic" value="/scan"/>
+        <param name="output_pointcloud_topic" value="/pointcloud"/>
+        <param name="frame_id" value="base_scan"/>
+        <param name="height_layers" value="5"/>
+        <param name="height_increment" value="0.2"/>
+        <param name="z_offset" value="0.1"/>
+    </node>
+
+    <!-- Detector Parameters -->
+    <rosparam file="$(find onboard_detector)/cfg/turtlebot3_detector_param.yaml" ns="/onboard_detector" />
+    
+    <!-- Detector Node (without YOLO) -->
+    <node pkg="onboard_detector" type="detector_node" name="detector_node" output="screen" />
+    <!-- <node pkg="onboard_detector" type="yolov11_detector_node.py" name="yolov11_detector_node" output="log" /> -->
+
+    <!-- RViz Visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find onboard_detector)/rviz/turtlebot3_detector.rviz"/>
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find onboard_detector)/rviz/detector_lv.rviz"/> -->
+
+    <!-- TF transforms -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_scan"
+          args="0 0 0.18 0 0 0 base_link base_scan"/>
+    
+    <!-- Map to odom transform for simulation -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom"
+          args="0 0 0 0 0 0 map odom"/>
+
+    <!-- Dynamic Obstacle Spawner -->
+    <node pkg="onboard_detector" type="dynamic_obstacle_spawner.py" name="dynamic_obstacle_spawner" output="screen">
+        <param name="spawn_rate" value="0.1"/>
+        <param name="max_obstacles" value="3"/>
+    </node>
+
+</launch>

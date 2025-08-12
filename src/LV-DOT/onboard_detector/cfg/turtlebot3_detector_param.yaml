@@ -1,0 +1,77 @@
+localization_mode: 1 # 0: pose 1: odom (使用odom模式适合TurtleBot3)
+
+# ROS Topics (适配TurtleBot3)
+depth_image_topic: /camera/depth/image_rect_raw  # 如果没有深度相机可以留空
+color_image_topic: /camera/color/image_raw       # 如果没有RGB相机可以留空
+lidar_pointcloud_topic: /pointcloud              # 从2D LiDAR转换的3D点云
+# pose_topic: /mavros/local_position/pose          # 如果使用pose模式
+odom_topic: /odom                                # TurtleBot3的里程计话题
+
+# Camera Parameters (如果没有相机，这些参数不会被使用)
+depth_intrinsics: [385.3096008300781, 385.3096008300781, 324.7971496582031, 237.722900390625]
+color_intrinsics: [606.3120727539062, 605.92626953125, 314.6913146972656, 252.1909942626953]
+depth_scale_factor: 1000
+depth_min_value: 0.3
+depth_max_value: 3.0
+depth_filter_margin: 5
+depth_skip_pixel: 2
+image_cols: 640
+image_rows: 480
+
+# Sensor Transforms (适配TurtleBot3几何形状)
+body_to_camera_depth: [0.0,  0.0,  1.0,  0.0,
+                      -1.0,  0.0,  0.0,  0.0,   
+                       0.0, -1.0,  0.0,  0.0,
+                       0.0,  0.0,  0.0,  1.0]
+body_to_camera_color: [0.0,  0.0,  1.0,  0.0,
+                      -1.0,  0.0,  0.0,  0.0,   
+                       0.0, -1.0,  0.0,  0.0,
+                       0.0,  0.0,  0.0,  1.0]
+body_to_lidar: [1.0,  0.0,  0.0,  0.0,    # TurtleBot3 LiDAR位置
+                0.0,  1.0,  0.0,  0.0,
+                0.0,  0.0,  1.0,  0.18,   # LiDAR高度约18cm
+                0.0,  0.0,  0.0,  1.0]
+
+# System
+time_step: 0.1  # 适当调整更新频率
+
+# DBSCAN Common
+ground_height: -0.1   # 地面高度，考虑到TurtleBot3较低
+roof_height: 2.0      # 天花板高度
+
+# DBSCAN visual param (如果没有深度相机，这些参数不会影响结果)
+voxel_occupied_thresh: 3
+dbscan_min_points_cluster: 10  # 降低最小聚类点数，适应稀疏的2D LiDAR数据
+dbscan_search_range_epsilon: 0.1
+
+# DBSCAN LiDAR param (重要：针对2D转3D的点云优化)
+lidar_DBSCAN_min_points: 5      # 更低的最小点数
+lidar_DBSCAN_epsilon: 0.15       # 更大的搜索半径
+downsample_threshold: 1000       # 降低下采样阈值
+gaussian_downsample_rate: 2
+
+# LiDAR Visual Filtering
+filtering_BBox_IOU_threshold: 0.3
+
+# Tracking and data association
+max_match_range: 1.0    # 增大匹配范围，适应TurtleBot3移动
+max_size_diff_range: 0.8
+feature_weight: [3.0, 3.0, 0.1, 0.5, 0.5, 0.05, 0, 0, 0]
+history_size: 50        # 减少历史大小
+fix_size_history_threshold: 5
+fix_size_dimension_threshold: 0.5
+kalman_filter_param: [0.5, 0.1, 0.1, 0.1, 0.1, 0.5, 0.8]
+kalman_filter_averaging_frames: 5
+
+# Classification
+frame_skip: 3           # 减少跳帧数
+dynamic_velocity_threshold: 0.1  # 降低速度阈值
+dynamic_voting_threshold: 0.6    # 降低投票阈值
+frames_force_dynamic: 5
+frames_force_dynamic_check_range: 15
+dynamic_consistency_threshold: 3
+
+# Constrain size (适配室内环境的障碍物尺寸)
+target_constrain_size: false      # 不限制目标尺寸，检测所有障碍物
+target_object_size: [0.3, 0.3, 1.0]  # 人的大致尺寸
+max_object_size: [2.0, 2.0, 3.0]     # 最大目标尺寸

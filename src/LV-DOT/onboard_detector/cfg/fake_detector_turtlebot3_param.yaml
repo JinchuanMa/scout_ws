@@ -1,0 +1,5 @@
+# TurtleBot3 fake detector parameters
+color_distance: 5.0
+target_obstacle: ["person", "dynamic_box", "dynamic_cylinder", "unit_box", "construction_cone"]
+odom_topic: "/odom"  # TurtleBot3使用/odom话题
+history_size: 100

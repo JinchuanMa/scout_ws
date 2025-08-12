@@ -1,0 +1,10 @@
+<launch>
+    <!-- Load TurtleBot3 fake detector parameters -->
+    <rosparam file="$(find onboard_detector)/cfg/fake_detector_turtlebot3_param.yaml" />
+    
+    <!-- Launch fake detector node -->
+    <node pkg="onboard_detector" type="fake_detector_node" name="fake_detector_node" output="screen" />
+    
+    <!-- Launch RViz with custom config -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find onboard_detector)/rviz/turtlebot3_fake_detector.rviz" required="false"/>
+</launch>

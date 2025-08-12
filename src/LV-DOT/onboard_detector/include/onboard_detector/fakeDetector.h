@@ -58,7 +58,8 @@ namespace onboardDetector{
 		void stateCB(const gazebo_msgs::ModelStatesConstPtr& allStates);
 		void odomCB(const nav_msgs::OdometryConstPtr& odom);
 		void histCB(const ros::TimerEvent&);
-		std::vector<int>& findTargetIndex(const std::vector<std::string>& modelNames);
+		// std::vector<int>& findTargetIndex(const std::vector<std::string>& modelNames);
+		std::vector<int> findTargetIndex(const std::vector<std::string>& modelNames);
 		void updateVisMsg();
 		void publishObstacles();
 		void publishVisualization();

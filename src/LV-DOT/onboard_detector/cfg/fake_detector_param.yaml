@@ -1,17 +1,6 @@
-# 适配Scout机器人的假障碍物检测器配置
-color_distance: 8.0  # Scout的感知范围，根据激光雷达范围调整
+# this is only used in simulation
+color_distance: 5.0
 target_obstacle: ["person", "dynamic_box", "dynamic_cylinder"]
-
-# Scout机器人的里程计话题（需要根据实际情况调整）
-# 可能的话题名称：
-# odom_topic: "/odom"                    # 通用里程计话题
-# odom_topic: "/scout/odom"              # 如果有命名空间
-# odom_topic: "/odometry/filtered"       # 如果使用了滤波器
-odom_topic: "/odom"
-
+# odom_topic: "mavros/local_position/odom"
+odom_topic: "/CERLAB/quadcopter/odom"
 history_size: 100
-
-# Scout机器人的基本参数（用于碰撞检测扩展）
-robot_length: 0.62
-robot_width: 0.585
-robot_height: 0.235

@@ -18,6 +18,23 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   vision_msgs
   message_generation
+
+  roscpp
+  rospy
+  std_msgs
+  sensor_msgs
+  geometry_msgs
+  nav_msgs
+  visualization_msgs
+  vision_msgs
+  image_transport
+  cv_bridge
+  pcl_ros
+  pcl_conversions
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
+  message_filters
 )
 
 ## System dependencies are found with CMake's conventions
@@ -149,6 +166,9 @@ add_library(${PROJECT_NAME}
 # add_executable(${PROJECT_NAME}_node src/onboard_detector_node.cpp)
 add_executable(detector_node src/detector_node.cpp)
 add_executable(fake_detector_node src/fake_detector_node.cpp)
+add_executable(lidar_2d_to_3d_converter 
+  src/lidar_2d_to_3d_converter.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -168,6 +188,10 @@ add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(detector_node ${PROJECT_NAME})
 target_link_libraries(fake_detector_node ${PROJECT_NAME})
+target_link_libraries(lidar_2d_to_3d_converter
+  ${catkin_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -178,10 +202,10 @@ target_link_libraries(fake_detector_node ${PROJECT_NAME})
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+catkin_install_python(PROGRAMS
+  scripts/dynamic_obstacle_spawner.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark executables for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
